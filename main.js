@@ -17,7 +17,7 @@
    If SHEET_CSV_URL is empty or unreachable, the site falls back to
    /data/performances.csv so the page keeps working.
    ------------------------------------------------------------------------- */
-const SHEET_CSV_URL = ""; // e.g. "https://docs.google.com/spreadsheets/d/e/XXXX/pub?gid=0&single=true&output=csv"
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSnsJNsV7fHu5V0AYOWaZtqc2OIt-k4t-NE_2c3SLnmKFvDUu__L3kEKkYw-Yv6eOKJYnHvCLFuEOOP/pub?output=csv";
 const LOCAL_CSV_URL = "data/performances.csv";
 
 // TODO: replace center coords with the actual neighborhood center before launch.
