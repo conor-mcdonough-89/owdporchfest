@@ -121,13 +121,18 @@ async function loadPerformances() {
 /* ---------- map ---------- */
 
 // A custom SVG pin as a Leaflet divIcon so it inherits our accent color and
-// stays crisp on any screen. One filled teardrop + an inner dot.
-function makePorchIcon() {
+// stays crisp on any screen. Teardrop + inner circle with the set-order number.
+function makePorchIcon(label) {
+  const text = String(label ?? "");
+  const fontSize = text.length > 1 ? 9 : 11;
   const svg = `
     <svg class="porch-pin" viewBox="0 0 34 44" xmlns="http://www.w3.org/2000/svg">
       <path d="M17 1.5 C8 1.5 1.5 8.5 1.5 17 C1.5 27.5 17 42.5 17 42.5 C17 42.5 32.5 27.5 32.5 17 C32.5 8.5 26 1.5 17 1.5 Z"
             fill="currentColor" stroke="#9e4429" stroke-width="1.8" stroke-linejoin="round"/>
-      <circle cx="17" cy="16.5" r="5" fill="#f6efe2"/>
+      <circle cx="17" cy="16.5" r="7" fill="#f6efe2"/>
+      <text x="17" y="17" text-anchor="middle" dominant-baseline="central"
+            font-family="Fraunces, Georgia, serif" font-weight="600"
+            font-size="${fontSize}" fill="#9e4429">${escapeHTML(text)}</text>
     </svg>`;
   return L.divIcon({
     className: "porch-pin-wrap",
@@ -138,10 +143,11 @@ function makePorchIcon() {
   });
 }
 
-function popupHTML(row) {
+function popupHTML(row, order) {
+  const eyebrow = `Set ${order} · ${timeRange(row.start_time, row.end_time)}`;
   return `
     <div class="popup-card">
-      <p class="popup-card__eyebrow">${escapeHTML(timeRange(row.start_time, row.end_time))}</p>
+      <p class="popup-card__eyebrow">${escapeHTML(eyebrow)}</p>
       <h4>${escapeHTML(row.name)}</h4>
       <p class="meta">
         <strong>${escapeHTML(row.style || "Live music")}</strong><br/>
@@ -166,19 +172,19 @@ function buildMap(rows) {
     subdomains: "abcd",
   }).addTo(map);
 
-  const icon = makePorchIcon();
   const markers = {};
   const bounds = [];
 
   rows.forEach((row, i) => {
+    const order = i + 1;
     const m = L.marker([row.lat, row.lng], {
-      icon,
-      alt: `${row.name} — ${row.style || "performance"} at ${row.address}`,
+      icon: makePorchIcon(order),
+      alt: `Set ${order}: ${row.name} — ${row.style || "performance"} at ${row.address}`,
       keyboard: true,
       riseOnHover: true,
     }).addTo(map);
 
-    m.bindPopup(popupHTML(row), {
+    m.bindPopup(popupHTML(row, order), {
       closeButton: true,
       autoPanPadding: [24, 24],
       maxWidth: 280,
