@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" aria-hidden="true" preserveAspectRatio="none">
+  <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+    <path d="M4 20 L14 20" />
+    <path d="M22 12 L22 28" />
+    <path d="M30 6 L30 34" />
+    <path d="M38 14 L38 26" />
+    <path d="M46 10 L46 30" />
+    <path d="M54 18 L54 22" />
+    <path d="M62 6 L62 34" />
+    <path d="M70 12 L70 28" />
+    <path d="M78 16 L78 24" />
+    <path d="M86 8 L86 32" />
+    <path d="M94 14 L94 26" />
+    <path d="M102 6 L102 34" />
+    <path d="M110 12 L110 28" />
+    <path d="M118 16 L118 24" />
+    <path d="M126 10 L126 30" />
+    <path d="M134 14 L134 26" />
+    <path d="M142 8 L142 32" />
+    <path d="M150 18 L150 22" />
+    <path d="M158 12 L158 28" />
+    <path d="M166 6 L166 34" />
+    <path d="M174 14 L174 26" />
+    <path d="M182 10 L182 30" />
+    <path d="M190 20 L196 20" />
+  </g>
+</svg>

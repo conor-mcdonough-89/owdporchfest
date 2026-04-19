@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OWD Porchfest — Saturday, September 12, 2026</title>
+  <meta name="description" content="A neighborhood concert day. Live music on front porches across OWD, rain or shine." />
+  <meta name="theme-color" content="#c25a3a" />
+
+  <!-- Fonts: characterful display (Fraunces) + warm body (Nunito) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Nunito:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Leaflet CSS via CDN -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="shell">
+      <a class="brand reveal" href="#top" aria-label="OWD Porchfest home">
+        <span class="brand__mark" aria-hidden="true">
+          <!-- inlined so it inherits currentColor -->
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 54 L60 20 L106 54"/>
+              <path d="M18 54 L102 54"/>
+              <path d="M26 54 L26 98"/>
+              <path d="M94 54 L94 98"/>
+              <path d="M14 98 L106 98"/>
+              <path d="M52 98 L52 70 L68 70 L68 98"/>
+              <circle cx="64" cy="84" r="1.5" fill="currentColor"/>
+              <path d="M36 66 L44 66"/>
+              <path d="M76 66 L84 66"/>
+              <path d="M20 46 Q40 58 60 46 Q80 58 100 46"/>
+              <ellipse cx="40" cy="86" rx="9" ry="11" transform="rotate(-20 40 86)"/>
+              <circle cx="39" cy="85" r="2.4" transform="rotate(-20 40 86)"/>
+              <path d="M46 78 L68 56"/>
+              <path d="M68 56 L72 52"/>
+            </g>
+          </svg>
+        </span>
+        <span class="brand__wordmark">OWD <em>Porchfest</em></span>
+      </a>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__bunting" aria-hidden="true">
+        <svg viewBox="0 0 800 60" preserveAspectRatio="none" width="100%" height="100%">
+          <path d="M0 10 Q200 50 400 14 Q600 50 800 10" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          <g>
+            <polygon points="60,16 72,16 66,34" fill="#c25a3a"/>
+            <polygon points="130,22 142,22 136,40" fill="#e3b23c"/>
+            <polygon points="200,24 212,24 206,42" fill="#4a6b4a"/>
+            <polygon points="270,22 282,22 276,40" fill="#c25a3a"/>
+            <polygon points="340,18 352,18 346,36" fill="#e3b23c"/>
+            <polygon points="410,14 422,14 416,32" fill="#4a6b4a"/>
+            <polygon points="480,18 492,18 486,36" fill="#c25a3a"/>
+            <polygon points="550,22 562,22 556,40" fill="#e3b23c"/>
+            <polygon points="620,24 632,24 626,42" fill="#4a6b4a"/>
+            <polygon points="690,22 702,22 696,40" fill="#c25a3a"/>
+            <polygon points="740,16 752,16 746,34" fill="#e3b23c"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="shell hero__inner">
+        <div>
+          <p class="eyebrow reveal">A neighborhood concert day</p>
+          <h1 id="hero-title" class="reveal">
+            <span class="lineA">One afternoon.</span>
+            <span class="lineB">Every <span class="underline-ink">porch</span> a stage.</span>
+          </h1>
+          <p class="hero__date reveal">
+            Saturday, September 12, 2026
+            <span class="dot" aria-hidden="true"></span>
+            12pm&ndash;6pm
+          </p>
+          <p class="hero__lede reveal">
+            OWD Porchfest is a free, all-ages afternoon of live music hosted on front porches
+            across the neighborhood. Wander the map, follow the sound, say hi to a neighbor.
+          </p>
+        </div>
+
+        <aside class="hero__aside reveal" aria-label="Quick facts">
+          <p>Free. Outdoors. Rain or shine. Bring a folding chair and your kindest neighbor.</p>
+        </aside>
+      </div>
+
+      <svg class="hero__decor" viewBox="0 0 200 40" aria-hidden="true" preserveAspectRatio="none">
+        <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <path d="M4 20 L14 20"/><path d="M22 12 L22 28"/><path d="M30 6 L30 34"/>
+          <path d="M38 14 L38 26"/><path d="M46 10 L46 30"/><path d="M54 18 L54 22"/>
+          <path d="M62 6 L62 34"/><path d="M70 12 L70 28"/><path d="M78 16 L78 24"/>
+          <path d="M86 8 L86 32"/><path d="M94 14 L94 26"/><path d="M102 6 L102 34"/>
+          <path d="M110 12 L110 28"/><path d="M118 16 L118 24"/><path d="M126 10 L126 30"/>
+          <path d="M134 14 L134 26"/><path d="M142 8 L142 32"/><path d="M150 18 L150 22"/>
+          <path d="M158 12 L158 28"/><path d="M166 6 L166 34"/><path d="M174 14 L174 26"/>
+          <path d="M182 10 L182 30"/><path d="M190 20 L196 20"/>
+        </g>
+      </svg>
+    </section>
+
+    <!-- MAP -->
+    <section class="section section--band" aria-labelledby="map-title" id="map-section">
+      <div class="shell">
+        <div class="section__head reveal">
+          <div>
+            <p class="eyebrow">The route</p>
+            <h2 id="map-title">Follow the <span class="underline-ink">sound</span>.</h2>
+          </div>
+        </div>
+
+        <div class="map-wrap reveal">
+          <div
+            id="map"
+            role="region"
+            aria-label="Interactive map of Porchfest performances. Use Tab to focus markers and Enter to open details."
+          ></div>
+
+          <aside class="map-aside" aria-label="Map legend and tips">
+            <h3>How to read the map</h3>
+            <div class="map-legend">
+              <svg class="legend-pin" viewBox="0 0 34 44" aria-hidden="true">
+                <path d="M17 2 C8 2 2 9 2 17 C2 27 17 42 17 42 C17 42 32 27 32 17 C32 9 26 2 17 2 Z"
+                  fill="currentColor" stroke="#9e4429" stroke-width="2"/>
+                <circle cx="17" cy="17" r="5" fill="#f6efe2"/>
+              </svg>
+              <span>Each pin is a porch hosting a set.</span>
+            </div>
+            <p class="map-hint">Click a pin to see the band, the time window, and what they&rsquo;re bringing to the neighborhood.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCHEDULE -->
+    <section class="section" aria-labelledby="schedule-title" id="schedule-section">
+      <div class="shell">
+        <div class="section__head reveal">
+          <div>
+            <p class="eyebrow">The lineup</p>
+            <h2 id="schedule-title">Today&rsquo;s <span class="underline-ink">porches</span>.</h2>
+          </div>
+          <p style="max-width: 40ch; margin: 0;">
+            Hover a row to highlight it; tap or click to send the map to that porch.
+          </p>
+        </div>
+
+        <div class="reveal">
+          <table class="schedule-table" aria-describedby="schedule-title">
+            <thead>
+              <tr>
+                <th scope="col">Time</th>
+                <th scope="col">Location</th>
+                <th scope="col">Band</th>
+                <th scope="col">Style</th>
+              </tr>
+            </thead>
+            <tbody id="schedule-body">
+              <!-- filled by main.js -->
+            </tbody>
+          </table>
+          <p id="schedule-status" class="schedule-status" role="status">Loading the lineup&hellip;</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="shell">
+      <p class="signoff">See you on the porch.</p>
+      <svg class="wave" viewBox="0 0 200 40" aria-hidden="true" preserveAspectRatio="none">
+        <path d="M2 20 Q25 2 50 20 T100 20 T150 20 T198 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <p class="meta">&copy; <span id="year"></span> OWD Porchfest &middot; A neighborhood labor of love.</p>
+      <nav class="socials" aria-label="Social links">
+        <a href="#" rel="noopener">Instagram</a>
+        <a href="#" rel="noopener">Email the organizers</a>
+        <a href="#" rel="noopener">Volunteer</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Leaflet + PapaParse via CDN -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"
+  ></script>
+  <script src="main.js"></script>
+</body>
+</html>
