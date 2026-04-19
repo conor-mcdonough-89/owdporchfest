@@ -98,6 +98,7 @@ function normalizeRows(rows) {
       end_time: (r.end_time || "").trim(),
       style: (r.style || "").trim(),
       description: (r.description || "").trim(),
+      host: (r.host || "").trim(),
     }))
     .filter((r) => r.name && Number.isFinite(r.lat) && Number.isFinite(r.lng))
     .sort((a, b) => minutesFromHHMM(a.start_time) - minutesFromHHMM(b.start_time));
@@ -165,13 +166,16 @@ function makePorchIcon(label) {
 
 function popupHTML(row, order) {
   const eyebrow = `Set ${order} · ${timeRange(row.start_time, row.end_time)}`;
+  const hostLine = row.host
+    ? `<br/><span class="hosted-by">Hosted by ${escapeHTML(row.host)}</span>`
+    : "";
   return `
     <div class="popup-card">
       <p class="popup-card__eyebrow">${escapeHTML(eyebrow)}</p>
       <h4>${escapeHTML(row.name)}</h4>
       <p class="meta">
         <strong>${escapeHTML(row.style || "Live music")}</strong><br/>
-        ${escapeHTML(row.address)}
+        ${escapeHTML(row.address)}${hostLine}
       </p>
       <p class="blurb">${escapeHTML(row.description)}</p>
     </div>

@@ -60,11 +60,12 @@ The map and schedule are driven by one CSV. You have two options:
 2. Make sure the columns match exactly (case-sensitive, in this order):
 
    ```
-   name, address, lat, lng, start_time, end_time, style, description
+   name, address, lat, lng, start_time, end_time, style, description, host
    ```
 
    - `lat` / `lng` — decimal degrees (e.g. `41.8231`, `-71.4128`).
    - `start_time` / `end_time` — 24-hour `HH:MM` (e.g. `13:30`).
+   - `host` — optional. If filled in, the map popup will read "Hosted by …". Leave blank to omit.
 
 3. In Google Sheets: **File → Share → Publish to web**.
 4. In the dialog: pick the correct tab, choose **Comma-separated values (.csv)**, and click **Publish**. Copy the URL Google gives you — it will look like:
