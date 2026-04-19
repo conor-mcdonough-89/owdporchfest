@@ -103,11 +103,31 @@ function normalizeRows(rows) {
     .sort((a, b) => minutesFromHHMM(a.start_time) - minutesFromHHMM(b.start_time));
 }
 
+// If two rows share the same coordinates, one marker will hide the others.
+// Fan duplicates out in a small circle (~10m) so every pin is visible.
+function scatterDuplicates(rows) {
+  const seen = new Map();
+  const RADIUS = 0.00009; // ~10 m at mid-latitudes
+  return rows.map((r) => {
+    const key = `${r.lat.toFixed(5)},${r.lng.toFixed(5)}`;
+    const count = seen.get(key) || 0;
+    seen.set(key, count + 1);
+    if (count === 0) return r;
+    // Golden-angle scatter keeps arrangements neat for 2..N duplicates.
+    const angle = (count * 137.5) * Math.PI / 180;
+    return {
+      ...r,
+      lat: r.lat + Math.sin(angle) * RADIUS,
+      lng: r.lng + Math.cos(angle) * RADIUS,
+    };
+  });
+}
+
 async function loadPerformances() {
   if (SHEET_CSV_URL) {
     try {
       const rows = await loadCSV(SHEET_CSV_URL);
-      const clean = normalizeRows(rows);
+      const clean = scatterDuplicates(normalizeRows(rows));
       if (clean.length) return { rows: clean, source: "sheet" };
       console.warn("Sheet returned no rows, falling back to local CSV.");
     } catch (err) {
@@ -115,7 +135,7 @@ async function loadPerformances() {
     }
   }
   const rows = await loadCSV(LOCAL_CSV_URL);
-  return { rows: normalizeRows(rows), source: "local" };
+  return { rows: scatterDuplicates(normalizeRows(rows)), source: "local" };
 }
 
 /* ---------- map ---------- */
