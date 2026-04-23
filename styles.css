@@ -341,7 +341,7 @@ p  { margin: 0 0 1em; color: var(--color-ink); max-width: var(--measure); }
   border-radius: var(--radius);
   border: 1px solid var(--color-forest);
   box-shadow: var(--shadow-soft);
-  background: var(--color-sky);
+  background: var(--color-mint);
   overflow: hidden;
 }
 .map-aside {
