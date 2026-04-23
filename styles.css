@@ -4,12 +4,12 @@
    ========================================================================= */
 
 :root {
-  /* Palette — fresh mint backdrop, forest + coral accents, dusty blue cool note. */
-  --color-bg:           #BEE0CF;  /* soft mint — the page paper */
-  --color-bg-deep:      #AED3BE;  /* slightly deeper mint for contrast bands */
+  /* Palette — cream paper, coral accent, forest + dusty blue secondaries. */
+  --color-bg:           #f6efe2;  /* cream paper */
+  --color-bg-deep:      #ede2cc;  /* warmer cream for contrast bands */
   --color-ink:          #424242;  /* foreground text */
   --color-ink-soft:     #6b6b6b;  /* muted body copy */
-  --color-hairline:     #9FC6B0;  /* faint divider, tuned to the bg */
+  --color-hairline:     #d9cdb4;  /* faint divider */
   --color-accent:       #EE5F4E;  /* coral — the dominant accent */
   --color-accent-deep:  #D54838;  /* hover / pressed coral */
   --color-accent-soft:  #FBD4CE;  /* pale coral wash for chips, highlights */
@@ -330,7 +330,7 @@ p  { margin: 0 0 1em; color: var(--color-ink-soft); max-width: var(--measure); }
   border-radius: var(--radius);
   border: 1px solid var(--color-hairline);
   box-shadow: var(--shadow-soft);
-  background: #AED3BE;
+  background: #efe7d4;
   overflow: hidden;
 }
 .map-aside {
@@ -459,7 +459,7 @@ hr.popup-divider {
   color: var(--color-ink);
 }
 .leaflet-control-attribution {
-  background: rgba(190, 224, 207, 0.88) !important;
+  background: rgba(246, 239, 226, 0.88) !important;
   font-family: var(--font-body);
   font-size: 11px !important;
   color: var(--color-ink-soft) !important;

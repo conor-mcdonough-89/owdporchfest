@@ -170,16 +170,16 @@ function makePorchIcon(label, stackSize = 1) {
   const fontSize = text.length > 1 ? 9 : 11;
   const badge = stackSize > 1 ? `
     <g>
-      <circle cx="28" cy="7" r="6" fill="#D54838" stroke="#BEE0CF" stroke-width="1.5"/>
+      <circle cx="28" cy="7" r="6" fill="#D54838" stroke="#f6efe2" stroke-width="1.5"/>
       <text x="28" y="7.5" text-anchor="middle" dominant-baseline="central"
             font-family="Fraunces, Georgia, serif" font-weight="700"
-            font-size="7" fill="#BEE0CF">+${stackSize - 1}</text>
+            font-size="7" fill="#f6efe2">+${stackSize - 1}</text>
     </g>` : "";
   const svg = `
     <svg class="porch-pin" viewBox="0 0 34 44" xmlns="http://www.w3.org/2000/svg">
       <path d="M17 1.5 C8 1.5 1.5 8.5 1.5 17 C1.5 27.5 17 42.5 17 42.5 C17 42.5 32.5 27.5 32.5 17 C32.5 8.5 26 1.5 17 1.5 Z"
             fill="currentColor" stroke="#D54838" stroke-width="1.8" stroke-linejoin="round"/>
-      <circle cx="17" cy="16.5" r="7" fill="#BEE0CF"/>
+      <circle cx="17" cy="16.5" r="7" fill="#f6efe2"/>
       <text x="17" y="17" text-anchor="middle" dominant-baseline="central"
             font-family="Fraunces, Georgia, serif" font-weight="600"
             font-size="${fontSize}" fill="#D54838">${escapeHTML(text)}</text>
