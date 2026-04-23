@@ -136,7 +136,7 @@ p  { margin: 0 0 1em; color: var(--color-ink); max-width: var(--measure); }
   position: relative;
 }
 .section--band {
-  background: var(--color-sky);
+  background: #EDE4D3;
 }
 .section__head {
   display: flex;
