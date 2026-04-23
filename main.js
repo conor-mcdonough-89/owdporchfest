@@ -107,10 +107,11 @@ function normalizeRows(rows) {
 // Multiple acts at the same address collapse to a single pin; the popup then
 // stacks the sets. Key by lat/lng rounded to 5dp (~1 m) so tiny typos in the
 // sheet don't accidentally split a porch across two pins.
+// Porches are numbered in the order of their *earliest* set, so the pin number
+// is shared across all acts at that porch.
 function groupByLocation(rows) {
   const groups = new Map();
   rows.forEach((row, i) => {
-    const order = i + 1;
     const key = `${row.lat.toFixed(5)},${row.lng.toFixed(5)}`;
     if (!groups.has(key)) {
       groups.set(key, {
@@ -120,9 +121,27 @@ function groupByLocation(rows) {
         sets: [],
       });
     }
-    groups.get(key).sets.push({ ...row, order, rowIndex: i });
+    groups.get(key).sets.push({ ...row, rowIndex: i });
   });
-  return Array.from(groups.values());
+
+  const arr = Array.from(groups.values());
+  arr.forEach((g) => {
+    g.sets.sort(
+      (a, b) => minutesFromHHMM(a.start_time) - minutesFromHHMM(b.start_time)
+    );
+  });
+  arr.sort(
+    (a, b) =>
+      minutesFromHHMM(a.sets[0].start_time) -
+      minutesFromHHMM(b.sets[0].start_time)
+  );
+  arr.forEach((g, idx) => {
+    g.number = idx + 1;
+    g.sets.forEach((s) => {
+      s.porchNumber = g.number;
+    });
+  });
+  return arr;
 }
 
 async function loadPerformances() {
@@ -175,9 +194,12 @@ function makePorchIcon(label, stackSize = 1) {
   });
 }
 
-// Inner block shared by single-set and stacked popups.
-function popupItemInner(row) {
-  const eyebrow = `Set ${row.order} · ${timeRange(row.start_time, row.end_time)}`;
+// Inner block shared by single-set and stacked popups. When `prefix` is set
+// (single-set popup) it prepends the porch label to the time-range eyebrow;
+// stacked items just show the time since the porch label sits in the header.
+function popupItemInner(row, prefix = "") {
+  const time = timeRange(row.start_time, row.end_time);
+  const eyebrow = prefix ? `${prefix} · ${time}` : time;
   const hostLine = row.host
     ? `<br/><span class="hosted-by">Hosted by ${escapeHTML(row.host)}</span>`
     : "";
@@ -194,7 +216,7 @@ function popupItemInner(row) {
 
 function groupPopupHTML(group) {
   if (group.sets.length === 1) {
-    return `<div class="popup-card">${popupItemInner(group.sets[0])}</div>`;
+    return `<div class="popup-card">${popupItemInner(group.sets[0], `Porch ${group.number}`)}</div>`;
   }
   const items = group.sets
     .map((s) => `<div class="popup-item">${popupItemInner(s)}</div>`)
@@ -202,7 +224,7 @@ function groupPopupHTML(group) {
   return `
     <div class="popup-card popup-card--stacked">
       <div class="popup-stack-header">
-        <p class="popup-card__eyebrow">This porch</p>
+        <p class="popup-card__eyebrow">Porch ${group.number}</p>
         <p class="popup-stack-title">${group.sets.length} sets &middot; ${escapeHTML(group.address)}</p>
       </div>
       ${items}
@@ -229,13 +251,10 @@ function buildMap(rows) {
   const bounds = [];
 
   groups.forEach((group) => {
-    const firstOrder = group.sets[0].order;
-    const altParts = group.sets
-      .map((s) => `Set ${s.order} ${s.name}`)
-      .join(", ");
+    const altParts = group.sets.map((s) => s.name).join(", ");
     const m = L.marker([group.lat, group.lng], {
-      icon: makePorchIcon(firstOrder, group.sets.length),
-      alt: `${group.address} — ${altParts}`,
+      icon: makePorchIcon(group.number, group.sets.length),
+      alt: `Porch ${group.number}, ${group.address} — ${altParts}`,
       keyboard: true,
       riseOnHover: true,
     }).addTo(map);
