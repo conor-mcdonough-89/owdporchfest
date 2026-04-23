@@ -7,12 +7,14 @@
   /* Palette — section-scoped: mint hero/header, sky-blue map, white schedule,
      forest banner+footer. Coral, golden, and forest are global accents. */
   --color-forest:       #2E6545;
+  --color-forest-light: #3D7A54;  /* slightly lighter green for bunting */
   --color-mint:         #BEE0CF;
   --color-mint-deep:    #AED3BE;  /* subtle hover wash for mint regions */
   --color-sky:          #97BCE6;
   --color-coral:        #EE5F4E;
   --color-coral-deep:   #D54838;  /* hover / pressed */
   --color-golden:       #EDCF6F;
+  --color-blush:        #FDE8E4;  /* callout box wash */
   --color-ink:          #424242;  /* foreground text */
   --color-ink-soft:     #6b6b6b;  /* muted body copy */
   --color-white:        #ffffff;
@@ -293,7 +295,7 @@ p  { margin: 0 0 1em; color: var(--color-ink); max-width: var(--measure); }
     justify-self: end;
     position: relative;
     padding: 1.2rem 1.4rem;
-    background: var(--color-accent-soft);
+    background: var(--color-blush);
     border-radius: var(--radius);
     transform: rotate(1.6deg);
     box-shadow: var(--shadow-soft);
@@ -306,7 +308,7 @@ p  { margin: 0 0 1em; color: var(--color-ink); max-width: var(--measure); }
     left: 50%;
     width: 30px;
     height: 30px;
-    background: var(--color-accent);
+    background: var(--color-coral);
     border-radius: 50%;
     transform: translateX(-50%) rotate(-4deg);
     box-shadow: 0 2px 0 rgba(0,0,0,0.06);
@@ -483,15 +485,17 @@ hr.popup-divider {
   margin: 0 0 1.2rem;
   padding: 0.75rem 1rem;
   border-left: 3px solid var(--color-coral);
-  background: var(--color-accent-soft);
+  background: var(--color-blush);
   color: var(--color-ink);
+  font-style: italic;
   font-size: var(--step--1);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   max-width: none;
 }
 .schedule-disclaimer strong {
-  color: var(--color-coral-deep);
+  color: var(--color-coral);
   font-weight: 700;
+  font-style: normal;
   letter-spacing: 0.02em;
 }
 
