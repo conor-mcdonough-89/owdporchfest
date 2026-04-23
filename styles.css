@@ -426,6 +426,34 @@ p  { margin: 0 0 1em; color: var(--color-ink-soft); max-width: var(--measure); }
   font-style: italic;
   color: var(--color-ink-soft);
 }
+
+/* Stacked popup (multiple sets at one porch) */
+.popup-card--stacked {
+  padding: 0.9rem 1rem 1rem;
+  max-height: min(62vh, 520px);
+  overflow-y: auto;
+}
+.popup-stack-header {
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.6rem;
+  border-bottom: 1.5px solid var(--color-ink);
+}
+.popup-stack-header .popup-card__eyebrow { margin: 0 0 0.2rem; }
+.popup-stack-header .popup-stack-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: var(--color-ink);
+  margin: 0;
+  line-height: 1.2;
+}
+.popup-item + hr.popup-divider + .popup-item { margin-top: 0; }
+.popup-item p:last-child { margin-bottom: 0; }
+hr.popup-divider {
+  border: 0;
+  border-top: 1px dashed var(--color-hairline);
+  margin: 0.75rem 0;
+}
 .popup-card .blurb {
   margin: 0;
   font-size: 0.92rem;

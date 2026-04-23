@@ -104,31 +104,32 @@ function normalizeRows(rows) {
     .sort((a, b) => minutesFromHHMM(a.start_time) - minutesFromHHMM(b.start_time));
 }
 
-// If two rows share the same coordinates, one marker will hide the others.
-// Fan duplicates out in a small circle (~10m) so every pin is visible.
-function scatterDuplicates(rows) {
-  const seen = new Map();
-  const RADIUS = 0.00009; // ~10 m at mid-latitudes
-  return rows.map((r) => {
-    const key = `${r.lat.toFixed(5)},${r.lng.toFixed(5)}`;
-    const count = seen.get(key) || 0;
-    seen.set(key, count + 1);
-    if (count === 0) return r;
-    // Golden-angle scatter keeps arrangements neat for 2..N duplicates.
-    const angle = (count * 137.5) * Math.PI / 180;
-    return {
-      ...r,
-      lat: r.lat + Math.sin(angle) * RADIUS,
-      lng: r.lng + Math.cos(angle) * RADIUS,
-    };
+// Multiple acts at the same address collapse to a single pin; the popup then
+// stacks the sets. Key by lat/lng rounded to 5dp (~1 m) so tiny typos in the
+// sheet don't accidentally split a porch across two pins.
+function groupByLocation(rows) {
+  const groups = new Map();
+  rows.forEach((row, i) => {
+    const order = i + 1;
+    const key = `${row.lat.toFixed(5)},${row.lng.toFixed(5)}`;
+    if (!groups.has(key)) {
+      groups.set(key, {
+        lat: row.lat,
+        lng: row.lng,
+        address: row.address,
+        sets: [],
+      });
+    }
+    groups.get(key).sets.push({ ...row, order, rowIndex: i });
   });
+  return Array.from(groups.values());
 }
 
 async function loadPerformances() {
   if (SHEET_CSV_URL) {
     try {
       const rows = await loadCSV(SHEET_CSV_URL);
-      const clean = scatterDuplicates(normalizeRows(rows));
+      const clean = normalizeRows(rows);
       if (clean.length) return { rows: clean, source: "sheet" };
       console.warn("Sheet returned no rows, falling back to local CSV.");
     } catch (err) {
@@ -136,16 +137,25 @@ async function loadPerformances() {
     }
   }
   const rows = await loadCSV(LOCAL_CSV_URL);
-  return { rows: scatterDuplicates(normalizeRows(rows)), source: "local" };
+  return { rows: normalizeRows(rows), source: "local" };
 }
 
 /* ---------- map ---------- */
 
 // A custom SVG pin as a Leaflet divIcon so it inherits our accent color and
 // stays crisp on any screen. Teardrop + inner circle with the set-order number.
-function makePorchIcon(label) {
+// When stackSize > 1, a small "+N" badge is drawn in the top-right to signal
+// that multiple sets share this porch.
+function makePorchIcon(label, stackSize = 1) {
   const text = String(label ?? "");
   const fontSize = text.length > 1 ? 9 : 11;
+  const badge = stackSize > 1 ? `
+    <g>
+      <circle cx="28" cy="7" r="6" fill="#9e4429" stroke="#f6efe2" stroke-width="1.5"/>
+      <text x="28" y="7.5" text-anchor="middle" dominant-baseline="central"
+            font-family="Fraunces, Georgia, serif" font-weight="700"
+            font-size="7" fill="#f6efe2">+${stackSize - 1}</text>
+    </g>` : "";
   const svg = `
     <svg class="porch-pin" viewBox="0 0 34 44" xmlns="http://www.w3.org/2000/svg">
       <path d="M17 1.5 C8 1.5 1.5 8.5 1.5 17 C1.5 27.5 17 42.5 17 42.5 C17 42.5 32.5 27.5 32.5 17 C32.5 8.5 26 1.5 17 1.5 Z"
@@ -154,6 +164,7 @@ function makePorchIcon(label) {
       <text x="17" y="17" text-anchor="middle" dominant-baseline="central"
             font-family="Fraunces, Georgia, serif" font-weight="600"
             font-size="${fontSize}" fill="#9e4429">${escapeHTML(text)}</text>
+      ${badge}
     </svg>`;
   return L.divIcon({
     className: "porch-pin-wrap",
@@ -164,20 +175,37 @@ function makePorchIcon(label) {
   });
 }
 
-function popupHTML(row, order) {
-  const eyebrow = `Set ${order} · ${timeRange(row.start_time, row.end_time)}`;
+// Inner block shared by single-set and stacked popups.
+function popupItemInner(row) {
+  const eyebrow = `Set ${row.order} · ${timeRange(row.start_time, row.end_time)}`;
   const hostLine = row.host
     ? `<br/><span class="hosted-by">Hosted by ${escapeHTML(row.host)}</span>`
     : "";
   return `
-    <div class="popup-card">
-      <p class="popup-card__eyebrow">${escapeHTML(eyebrow)}</p>
-      <h4>${escapeHTML(row.name)}</h4>
-      <p class="meta">
-        <strong>${escapeHTML(row.style || "Live music")}</strong><br/>
-        ${escapeHTML(row.address)}${hostLine}
-      </p>
-      <p class="blurb">${escapeHTML(row.description)}</p>
+    <p class="popup-card__eyebrow">${escapeHTML(eyebrow)}</p>
+    <h4>${escapeHTML(row.name)}</h4>
+    <p class="meta">
+      <strong>${escapeHTML(row.style || "Live music")}</strong><br/>
+      ${escapeHTML(row.address)}${hostLine}
+    </p>
+    <p class="blurb">${escapeHTML(row.description)}</p>
+  `;
+}
+
+function groupPopupHTML(group) {
+  if (group.sets.length === 1) {
+    return `<div class="popup-card">${popupItemInner(group.sets[0])}</div>`;
+  }
+  const items = group.sets
+    .map((s) => `<div class="popup-item">${popupItemInner(s)}</div>`)
+    .join('<hr class="popup-divider"/>');
+  return `
+    <div class="popup-card popup-card--stacked">
+      <div class="popup-stack-header">
+        <p class="popup-card__eyebrow">This porch</p>
+        <p class="popup-stack-title">${group.sets.length} sets &middot; ${escapeHTML(group.address)}</p>
+      </div>
+      ${items}
     </div>
   `;
 }
@@ -196,37 +224,43 @@ function buildMap(rows) {
     subdomains: "abcd",
   }).addTo(map);
 
-  const markers = {};
+  const groups = groupByLocation(rows);
+  const markersByRowIndex = {};
   const bounds = [];
 
-  rows.forEach((row, i) => {
-    const order = i + 1;
-    const m = L.marker([row.lat, row.lng], {
-      icon: makePorchIcon(order),
-      alt: `Set ${order}: ${row.name} — ${row.style || "performance"} at ${row.address}`,
+  groups.forEach((group) => {
+    const firstOrder = group.sets[0].order;
+    const altParts = group.sets
+      .map((s) => `Set ${s.order} ${s.name}`)
+      .join(", ");
+    const m = L.marker([group.lat, group.lng], {
+      icon: makePorchIcon(firstOrder, group.sets.length),
+      alt: `${group.address} — ${altParts}`,
       keyboard: true,
       riseOnHover: true,
     }).addTo(map);
 
-    m.bindPopup(popupHTML(row, order), {
+    m.bindPopup(groupPopupHTML(group), {
       closeButton: true,
       autoPanPadding: [24, 24],
-      maxWidth: 280,
+      maxWidth: group.sets.length > 1 ? 320 : 280,
     });
 
-    // Light up the corresponding schedule row when a marker is focused/opened.
-    m.on("popupopen", () => highlightScheduleRow(i, false));
-    m.on("popupclose", () => highlightScheduleRow(-1, false));
+    const rowIndices = group.sets.map((s) => s.rowIndex);
+    m.on("popupopen", () => highlightScheduleRows(rowIndices));
+    m.on("popupclose", () => highlightScheduleRows([]));
 
-    markers[i] = m;
-    bounds.push([row.lat, row.lng]);
+    group.sets.forEach((s) => {
+      markersByRowIndex[s.rowIndex] = m;
+    });
+    bounds.push([group.lat, group.lng]);
   });
 
   if (bounds.length > 1) {
     map.fitBounds(bounds, { padding: [40, 40], maxZoom: 17 });
   }
 
-  return { map, markers };
+  return { map, markers: markersByRowIndex };
 }
 
 /* ---------- schedule ---------- */
@@ -235,14 +269,10 @@ let mapInstance = null;
 let markerIndex = {};
 let rowEls = [];
 
-function highlightScheduleRow(activeIdx, scroll = false) {
+function highlightScheduleRows(indices) {
+  const set = new Set(indices);
   rowEls.forEach((el, i) => {
-    if (i === activeIdx) {
-      el.classList.add("is-active");
-      if (scroll) el.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    } else {
-      el.classList.remove("is-active");
-    }
+    el.classList.toggle("is-active", set.has(i));
   });
 }
 
@@ -275,7 +305,7 @@ function buildSchedule(rows) {
         duration: 0.7,
       });
       marker.openPopup();
-      highlightScheduleRow(i, false);
+      highlightScheduleRows([i]);
       // Scroll the map into view on small screens so it's actually visible.
       document.getElementById("map-section").scrollIntoView({
         behavior: "smooth",
@@ -299,7 +329,10 @@ function buildSchedule(rows) {
   if (!rows.length) {
     status.textContent = "The lineup is still coming together — check back soon.";
   } else {
-    status.textContent = `${rows.length} porches on the program, sorted by start time.`;
+    const porches = new Set(rows.map((r) => `${r.lat.toFixed(5)},${r.lng.toFixed(5)}`)).size;
+    const setsWord = rows.length === 1 ? "set" : "sets";
+    const porchWord = porches === 1 ? "porch" : "porches";
+    status.textContent = `${rows.length} ${setsWord} across ${porches} ${porchWord}, sorted by start time.`;
   }
 }
 
