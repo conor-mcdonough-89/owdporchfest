@@ -4,18 +4,17 @@
    ========================================================================= */
 
 :root {
-  /* Palette — warm, earthy, front-porch Americana.
-     Dominant accent is terracotta; secondary warmth from mustard and moss. */
-  --color-bg:           #f6efe2;  /* cream paper */
-  --color-bg-deep:      #ede2cc;  /* warmer cream for contrast bands */
-  --color-ink:          #2a2420;  /* deep charcoal — not pure black */
-  --color-ink-soft:     #5a4f47;  /* muted body copy */
-  --color-hairline:     #d9cdb4;  /* faint divider */
-  --color-accent:       #c25a3a;  /* terracotta — the dominant accent */
-  --color-accent-deep:  #9e4429;  /* hover / pressed */
-  --color-accent-soft:  #f2d9ce;  /* wash for chips, highlights */
-  --color-mustard:      #e3b23c;
-  --color-moss:         #4a6b4a;
+  /* Palette — fresh mint backdrop, forest + coral accents, dusty blue cool note. */
+  --color-bg:           #BEE0CF;  /* soft mint — the page paper */
+  --color-bg-deep:      #AED3BE;  /* slightly deeper mint for contrast bands */
+  --color-ink:          #424242;  /* foreground text */
+  --color-ink-soft:     #6b6b6b;  /* muted body copy */
+  --color-hairline:     #9FC6B0;  /* faint divider, tuned to the bg */
+  --color-accent:       #EE5F4E;  /* coral — the dominant accent */
+  --color-accent-deep:  #D54838;  /* hover / pressed coral */
+  --color-accent-soft:  #FBD4CE;  /* pale coral wash for chips, highlights */
+  --color-mustard:      #97BCE6;  /* secondary: dusty blue (name kept for compat) */
+  --color-moss:         #2E6545;  /* primary: forest green */
 
   /* Typography */
   --font-display: "Fraunces", "DM Serif Display", Georgia, serif;
@@ -107,7 +106,7 @@ p  { margin: 0 0 1em; color: var(--color-ink-soft); max-width: var(--measure); }
   right: -2%;
   bottom: -0.08em;
   height: 0.42em;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'><path d='M2 9 Q40 2 80 8 T158 7 Q180 6 198 10' fill='none' stroke='%23c25a3a' stroke-width='3' stroke-linecap='round'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'><path d='M2 9 Q40 2 80 8 T158 7 Q180 6 198 10' fill='none' stroke='%23EE5F4E' stroke-width='3' stroke-linecap='round'/></svg>");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   z-index: -1;
@@ -331,7 +330,7 @@ p  { margin: 0 0 1em; color: var(--color-ink-soft); max-width: var(--measure); }
   border-radius: var(--radius);
   border: 1px solid var(--color-hairline);
   box-shadow: var(--shadow-soft);
-  background: #efe7d4;
+  background: #AED3BE;
   overflow: hidden;
 }
 .map-aside {
@@ -460,7 +459,7 @@ hr.popup-divider {
   color: var(--color-ink);
 }
 .leaflet-control-attribution {
-  background: rgba(246, 239, 226, 0.88) !important;
+  background: rgba(190, 224, 207, 0.88) !important;
   font-family: var(--font-body);
   font-size: 11px !important;
   color: var(--color-ink-soft) !important;
