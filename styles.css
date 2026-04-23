@@ -20,7 +20,7 @@
   --color-white:        #ffffff;
 
   /* Legacy aliases so existing rules + inline SVG refs keep working. */
-  --color-bg:           var(--color-mint);
+  --color-bg:           var(--color-white);
   --color-bg-deep:      var(--color-mint-deep);
   --color-hairline:     var(--color-mint-deep);
   --color-accent:       var(--color-coral);
