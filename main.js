@@ -225,16 +225,23 @@ function groupPopupHTML(group) {
   }
   const items = group.sets
     .map((s) => `<div class="popup-item">${popupItemInner(s)}</div>`)
-    .join('<hr class="popup-divider"/>');
+    .join("");
   return `
     <div class="popup-card popup-card--stacked">
       <div class="popup-stack-header">
         <p class="popup-card__eyebrow">Porch ${group.number}</p>
         <p class="popup-stack-title">${group.sets.length} sets &middot; ${escapeHTML(group.address)}</p>
       </div>
-      ${items}
+      <div class="popup-stack-items" data-count="${group.sets.length}">${items}</div>
     </div>
   `;
+}
+
+// Leaflet caps the popup at this width; side-by-side sets need more room.
+function popupMaxWidthFor(setCount) {
+  if (setCount <= 1) return 280;
+  if (setCount === 2) return 480;
+  return 640; // 3+ sets — wraps to two rows via auto-fit grid
 }
 
 function buildMap(rows) {
@@ -267,7 +274,7 @@ function buildMap(rows) {
     m.bindPopup(groupPopupHTML(group), {
       closeButton: true,
       autoPanPadding: [24, 24],
-      maxWidth: group.sets.length > 1 ? 320 : 280,
+      maxWidth: popupMaxWidthFor(group.sets.length),
     });
 
     const rowIndices = group.sets.map((s) => s.rowIndex);
