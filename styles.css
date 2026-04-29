@@ -472,9 +472,19 @@ p  { margin: 0 0 1em; color: var(--color-ink); max-width: var(--measure); }
 .popup-item p:last-child { margin-bottom: 0; }
 .popup-stack-items {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   column-gap: 1.4rem;
   row-gap: 1rem;
+  /* Force the popup wider than its single-column natural size, so Leaflet
+     gives the grid enough room to actually break into columns. Capped via
+     maxWidth on the popup options for 2+ set popups. */
+  min-width: min(400px, 92vw);
+}
+.popup-stack-items[data-count="3"],
+.popup-stack-items[data-count="4"],
+.popup-stack-items[data-count="5"],
+.popup-stack-items[data-count="6"] {
+  min-width: min(580px, 92vw);
 }
 .popup-stack-items .popup-item {
   min-width: 0;
