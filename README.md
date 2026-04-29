@@ -60,11 +60,12 @@ The map and schedule are driven by one CSV. You have two options:
 2. Make sure the columns match exactly (case-sensitive, in this order):
 
    ```
-   name, address, lat, lng, start_time, end_time, style, description, host
+   name, address, lat, lng, start_time, end_time, style, link, host
    ```
 
    - `lat` / `lng` — decimal degrees (e.g. `41.8231`, `-71.4128`).
    - `start_time` / `end_time` — 24-hour `HH:MM` (e.g. `13:30`).
+   - `link` — optional URL. If filled in, a "Learn more" link appears next to the band on the schedule and in the map popup. Leave blank to omit.
    - `host` — optional. If filled in, the map popup will read "Hosted by …". Leave blank to omit.
 
 3. In Google Sheets: **File → Share → Publish to web**.

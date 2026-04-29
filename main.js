@@ -8,8 +8,10 @@
    ADMIN: to update the lineup, do the following in Google Sheets:
      1. Open your performances sheet.
      2. Make sure the columns match exactly (case-sensitive):
-        name, address, lat, lng, start_time, end_time, style, description
-        (lat/lng as decimal degrees; start_time/end_time in 24h "HH:MM".)
+        name, address, lat, lng, start_time, end_time, style, link
+        (lat/lng as decimal degrees; start_time/end_time in 24h "HH:MM".
+        link is an optional URL — when present, a "Learn more" link
+        appears next to the band name in the schedule. Leave blank to omit.)
      3. File → Share → Publish to web.
      4. In the dialog, pick the correct sheet/tab and choose "Comma-separated
         values (.csv)". Click Publish. Copy the URL Google gives you.
@@ -97,7 +99,7 @@ function normalizeRows(rows) {
       start_time: (r.start_time || "").trim(),
       end_time: (r.end_time || "").trim(),
       style: (r.style || "").trim(),
-      description: (r.description || "").trim(),
+      link: (r.link || "").trim(),
       host: (r.host || "").trim(),
     }))
     .filter((r) => r.name && Number.isFinite(r.lat) && Number.isFinite(r.lng))
@@ -203,6 +205,9 @@ function popupItemInner(row, prefix = "") {
   const hostLine = row.host
     ? `<br/><span class="hosted-by">Hosted by ${escapeHTML(row.host)}</span>`
     : "";
+  const linkLine = row.link
+    ? `<p class="blurb"><a class="learn-more" href="${escapeHTML(row.link)}" target="_blank" rel="noopener">Learn more</a></p>`
+    : "";
   return `
     <p class="popup-card__eyebrow">${escapeHTML(eyebrow)}</p>
     <h4>${escapeHTML(row.name)}</h4>
@@ -210,7 +215,7 @@ function popupItemInner(row, prefix = "") {
       <strong>${escapeHTML(row.style || "Live music")}</strong><br/>
       ${escapeHTML(row.address)}${hostLine}
     </p>
-    <p class="blurb">${escapeHTML(row.description)}</p>
+    ${linkLine}
   `;
 }
 
@@ -309,12 +314,22 @@ function buildSchedule(rows) {
       `${row.name}, ${row.style || "music"}, ${timeRange(row.start_time, row.end_time)} at ${row.address}. Activate to show on map.`
     );
 
+    const learnMore = row.link
+      ? `<div><a class="learn-more" href="${escapeHTML(row.link)}" target="_blank" rel="noopener">Learn more</a></div>`
+      : "";
     tr.innerHTML = `
       <td class="time"><span>${escapeHTML(timeRange(row.start_time, row.end_time))}</span></td>
       <td class="location">${escapeHTML(row.address)}</td>
-      <td class="band">${escapeHTML(row.name)}</td>
+      <td class="band">${escapeHTML(row.name)}${learnMore}</td>
       <td class="style">${row.style ? `<span>${escapeHTML(row.style)}</span>` : ""}</td>
     `;
+
+    const learnMoreEl = tr.querySelector(".learn-more");
+    if (learnMoreEl) {
+      // Don't let the row's click handler swallow the link or yank the user
+      // back to the map when they're trying to follow it.
+      learnMoreEl.addEventListener("click", (e) => e.stopPropagation());
+    }
 
     const activate = () => {
       const marker = markerIndex[i];
