@@ -250,9 +250,22 @@ p  { margin: 0 0 1em; color: var(--color-ink); max-width: var(--measure); }
   margin: 0.2em 0 0.3em;
   font-family: var(--font-display-main);
   font-weight: 400;
-  letter-spacing: 0.005em;
-  line-height: 1;
+  line-height: 0.95;
   color: var(--color-forest);
+  text-transform: uppercase;
+}
+.hero-title__top,
+.hero-title__bottom {
+  display: block;
+}
+.hero-title__top {
+  font-size: 0.58em;
+  letter-spacing: 0.02em;
+}
+.hero-title__bottom {
+  font-size: 1em;
+  letter-spacing: 0.005em;
+  margin-top: 0.05em;
 }
 .hero__date {
   font-family: var(--font-display);
