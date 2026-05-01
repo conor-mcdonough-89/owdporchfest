@@ -530,24 +530,6 @@ p  { margin: 0 0 1em; color: var(--color-ink); max-width: var(--measure); }
 #schedule-section {
   background: var(--color-white);
 }
-.schedule-disclaimer {
-  margin: 0 0 1.2rem;
-  padding: 0.75rem 1rem;
-  border-left: 3px solid var(--color-coral);
-  background: var(--color-blush);
-  color: var(--color-ink);
-  font-style: italic;
-  font-size: var(--step--1);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  max-width: none;
-}
-.schedule-disclaimer strong {
-  color: var(--color-coral);
-  font-weight: 700;
-  font-style: normal;
-  letter-spacing: 0.02em;
-}
-
 .schedule-table {
   width: 100%;
   border-collapse: collapse;
@@ -563,6 +545,11 @@ p  { margin: 0 0 1em; color: var(--color-ink); max-width: var(--measure); }
   color: var(--color-coral);
   padding: 0 1rem 0.8rem;
   border-bottom: 1.5px solid var(--color-forest);
+}
+.schedule-table thead th.th-porch-num {
+  text-align: center;
+  width: 1%;
+  white-space: nowrap;
 }
 .schedule-table tbody tr {
   border-bottom: 1px solid var(--color-mint);
@@ -580,6 +567,26 @@ p  { margin: 0 0 1em; color: var(--color-ink); max-width: var(--measure); }
 .schedule-table td {
   padding: 1.1rem 1rem;
   vertical-align: baseline;
+}
+.schedule-table td.porch-num {
+  width: 1%;
+  text-align: center;
+  white-space: nowrap;
+}
+.schedule-table td.porch-num span {
+  display: inline-grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: var(--color-coral);
+  color: var(--color-white);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1;
+  border: 2px solid var(--color-coral-deep);
+  box-shadow: var(--shadow-pin);
 }
 .schedule-table td.time {
   font-family: var(--font-display);
@@ -661,9 +668,23 @@ p  { margin: 0 0 1em; color: var(--color-ink); max-width: var(--measure); }
     position: relative;
   }
   .schedule-table td { padding: 0.15rem 0; }
+  .schedule-table td.porch-num {
+    position: absolute;
+    top: 0.85rem;
+    right: 0.85rem;
+    width: auto;
+    padding: 0;
+  }
+  .schedule-table td.porch-num span {
+    width: 2.1rem;
+    height: 2.1rem;
+    font-size: 0.95rem;
+  }
+  .schedule-table td.band { padding-right: 3rem; }
   .schedule-table td.time {
     font-size: 1.1rem;
     margin-bottom: 0.1rem;
+    padding-right: 3rem;
   }
   .schedule-table td.band {
     font-size: 1.35rem;
