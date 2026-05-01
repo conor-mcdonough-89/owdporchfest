@@ -106,20 +106,45 @@ function normalizeRows(rows) {
     .sort((a, b) => minutesFromHHMM(a.start_time) - minutesFromHHMM(b.start_time));
 }
 
+function locationKey(row) {
+  return `${row.lat.toFixed(5)},${row.lng.toFixed(5)}`;
+}
+
+// Mutates rows in place to add `porchNumber`. Porches are numbered by the
+// earliest start_time at each lat/lng (rounded to 5dp ~ 1 m so tiny typos in
+// the sheet don't split a porch across two pins). All acts at the same porch
+// share a number, matching the pin label on the map.
+function assignPorchNumbers(rows) {
+  const earliestByKey = new Map();
+  rows.forEach((row) => {
+    const key = locationKey(row);
+    const m = minutesFromHHMM(row.start_time);
+    if (!earliestByKey.has(key) || m < earliestByKey.get(key)) {
+      earliestByKey.set(key, m);
+    }
+  });
+  const orderedKeys = Array.from(earliestByKey.entries())
+    .sort((a, b) => a[1] - b[1])
+    .map(([k]) => k);
+  const numberByKey = new Map(orderedKeys.map((k, i) => [k, i + 1]));
+  rows.forEach((row) => {
+    row.porchNumber = numberByKey.get(locationKey(row));
+  });
+}
+
 // Multiple acts at the same address collapse to a single pin; the popup then
-// stacks the sets. Key by lat/lng rounded to 5dp (~1 m) so tiny typos in the
-// sheet don't accidentally split a porch across two pins.
-// Porches are numbered in the order of their *earliest* set, so the pin number
-// is shared across all acts at that porch.
+// stacks the sets. Assumes `assignPorchNumbers` has already run so every row
+// carries its porch number.
 function groupByLocation(rows) {
   const groups = new Map();
   rows.forEach((row, i) => {
-    const key = `${row.lat.toFixed(5)},${row.lng.toFixed(5)}`;
+    const key = locationKey(row);
     if (!groups.has(key)) {
       groups.set(key, {
         lat: row.lat,
         lng: row.lng,
         address: row.address,
+        number: row.porchNumber,
         sets: [],
       });
     }
@@ -132,17 +157,7 @@ function groupByLocation(rows) {
       (a, b) => minutesFromHHMM(a.start_time) - minutesFromHHMM(b.start_time)
     );
   });
-  arr.sort(
-    (a, b) =>
-      minutesFromHHMM(a.sets[0].start_time) -
-      minutesFromHHMM(b.sets[0].start_time)
-  );
-  arr.forEach((g, idx) => {
-    g.number = idx + 1;
-    g.sets.forEach((s) => {
-      s.porchNumber = g.number;
-    });
-  });
+  arr.sort((a, b) => a.number - b.number);
   return arr;
 }
 
@@ -318,13 +333,15 @@ function buildSchedule(rows) {
     tr.setAttribute("role", "button");
     tr.setAttribute(
       "aria-label",
-      `${row.name}, ${row.style || "music"}, ${timeRange(row.start_time, row.end_time)} at ${row.address}. Activate to show on map.`
+      `Porch ${row.porchNumber}, ${row.name}, ${row.style || "music"}, ${timeRange(row.start_time, row.end_time)} at ${row.address}. Activate to show on map.`
     );
 
     const learnMore = row.link
       ? `<div><a class="learn-more" href="${escapeHTML(row.link)}" target="_blank" rel="noopener">Learn more</a></div>`
       : "";
+    const porchNum = row.porchNumber != null ? row.porchNumber : "";
     tr.innerHTML = `
+      <td class="porch-num"><span aria-label="Porch number">${escapeHTML(String(porchNum))}</span></td>
       <td class="time"><span>${escapeHTML(timeRange(row.start_time, row.end_time))}</span></td>
       <td class="location">${escapeHTML(row.address)}</td>
       <td class="band">${escapeHTML(row.name)}${learnMore}</td>
@@ -398,6 +415,7 @@ async function boot() {
     if (source === "local" && !SHEET_CSV_URL) {
       console.info("[Porchfest] Using bundled /data/performances.csv. Paste your published Google Sheet URL into SHEET_CSV_URL in main.js to go live.");
     }
+    assignPorchNumbers(rows);
     const { map, markers } = buildMap(rows);
     mapInstance = map;
     markerIndex = markers;
