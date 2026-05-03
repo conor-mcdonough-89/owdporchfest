@@ -501,8 +501,15 @@ p  { margin: 0 0 1em; color: var(--color-ink); max-width: var(--measure); }
   border-left: 1px dashed var(--color-hairline);
 }
 @media (max-width: 480px) {
-  .popup-stack-items {
+  .popup-stack-items,
+  .popup-stack-items[data-count="3"],
+  .popup-stack-items[data-count="4"],
+  .popup-stack-items[data-count="5"],
+  .popup-stack-items[data-count="6"] {
     grid-template-columns: 1fr;
+    /* Cancel the desktop min-width: on phones the popup must shrink to fit
+       the map container; otherwise it clips against the left/right edge. */
+    min-width: 0;
   }
   .popup-stack-items .popup-item + .popup-item::before {
     top: -0.5rem;
