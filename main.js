@@ -394,6 +394,23 @@ function buildSchedule(rows) {
   }
 }
 
+/* ---------- hero stat ---------- */
+
+// Refresh the hero eyebrow with live counts ("N musicians, M porches, 1
+// festive afternoon"). Each CSV row is one act; porches collapse rows that
+// share a lat/lng, matching the map's pin count. With no rows, we leave the
+// static fallback in index.html alone instead of rendering "0 musicians".
+function updateHeroStat(rows) {
+  if (!rows.length) return;
+  const el = $("#hero-stat");
+  if (!el) return;
+  const musicians = rows.length;
+  const porches = new Set(rows.map(locationKey)).size;
+  const musicianWord = musicians === 1 ? "musician" : "musicians";
+  const porchWord = porches === 1 ? "porch" : "porches";
+  el.textContent = `${musicians} ${musicianWord}, ${porches} ${porchWord}, 1 festive afternoon`;
+}
+
 /* ---------- reveal animation ---------- */
 
 function runReveal() {
@@ -416,6 +433,7 @@ async function boot() {
       console.info("[Porchfest] Using bundled /data/performances.csv. Paste your published Google Sheet URL into SHEET_CSV_URL in main.js to go live.");
     }
     assignPorchNumbers(rows);
+    updateHeroStat(rows);
     const { map, markers } = buildMap(rows);
     mapInstance = map;
     markerIndex = markers;
